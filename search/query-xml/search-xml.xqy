@@ -20,8 +20,8 @@
  :
  :)
 
-module "http://marklogic.com/search-xml"
-declare namespace stox = "http://marklogic.com/search-xml"
+module "http://marklogic.com/query-xml"
+declare namespace stox = "http://marklogic.com/query-xml"
 default function namespace = "http://www.w3.org/2003/05/xpath-functions"
 
 

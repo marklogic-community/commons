@@ -1,4 +1,4 @@
-import module namespace stox  = "http://marklogic.com/search-xml" at "search-xml.xqy"
+import module namespace stox  = "http://marklogic.com/query-xml" at "query-xml.xqy"
 
 (:
 	The following function call will produce a XML document like:
