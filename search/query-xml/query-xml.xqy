@@ -1,5 +1,5 @@
 (:~
- : Mark Logic Search string to XML utility
+ : Mark Logic Search String to XML Utility
  :
  : Copyright 2005 Ryan Grimm and O'Reilly Media
  :
@@ -20,14 +20,14 @@
  :
  :)
 
-module "http://marklogic.com/query-xml"
-declare namespace stox = "http://marklogic.com/query-xml"
+module "http://marklogic.com/commons/query-xml"
+declare namespace stox = "http://marklogic.com/commons/query-xml"
 default function namespace = "http://www.w3.org/2003/05/xpath-functions"
 
 
 (:~
  : Takes a search string as the input and returns a xml document that can be
- : used in constructing a cts:query()
+ : used in constructing a cts:search()
  :
  : @param $fields list of fields that you would like to be parsed.  For example,
  : if you were google you would set the fields to something like:
