@@ -45,7 +45,8 @@ default function namespace = "http://www.w3.org/2003/05/xpath-functions"
 define function stox:searchToXml(
 	$search as xs:string,
 	$fields as xs:string*,
-	$operators as xs:string*
+	$operators as xs:string*,
+	$modes as xs:string*
 ) as element(search)
 {
 	<search>{
@@ -58,30 +59,59 @@ define function stox:searchToXml(
 				then replace($i, "\s+", "!+!")
 				else $i
 		else $search, '')
-	let $terms := tokenize($newsearch, "\s+")
-	for $term in $terms
+	let $terms := tokenize($newsearch, "\s+|\.")
+	for $term at $count in $terms
 	let $tokens := tokenize($term, ":")
 	let $rawToken := if(substring($tokens[1], 1, 1) = $operators) then substring($tokens[1], 2) else $tokens[1]
+	where not($term = $modes)
 	return
 		if (count($tokens) > 1)
 		then
 			if ($fields[. = $rawToken] and replace(string-join($tokens[2 to count($tokens)], ""), "\s", ""))
 			then <term>{ (
-					stox:_getOp($tokens[1], $operators),
-					attribute { "field" } { stox:_stripOp($tokens[1], $operators) },
+					stox:_getMode($modes, $terms, $count)
+					,
+					stox:_getOp($tokens[1], $operators)
+					,
+					attribute { "field" } { stox:_stripOp($tokens[1], $operators) }
+					,
 					replace(string-join($tokens[2 to count($tokens)], ":"), "!\+!", " ")
 				) }</term>
 			else <term>{ (
-					stox:_getOp($tokens[1], $operators),
+					stox:_getMode($modes, $terms, $count)
+					,
+					stox:_getOp($tokens[1], $operators)
+					,
 					stox:_stripOp(replace(string-join($tokens, ":"), "!\+!", " "), $operators) )
 				}</term>
 		else if ($tokens[1])
 		then <term>{ (
-				stox:_getOp($tokens[1], $operators),
+				stox:_getMode($modes, $terms, $count)
+				,
+				stox:_getOp($tokens[1], $operators)
+				,
 				replace(stox:_stripOp($tokens[1], $operators), "!\+!", " ")
 			) }</term>
 		else ()
 	}</search>
+}
+
+define function stox:_getMode(
+	$modes as xs:string*,
+	$terms as xs:string*,
+	$index as xs:integer
+) as attribute()?
+{
+	if($terms[$index - 1] = $modes or $terms[$index + 1] = $modes)
+	then attribute mode { 
+		let $prev := $terms[$index - 1]
+		let $next := $terms[$index + 1]
+		return
+			if($next = $modes)
+			then $next
+			else $prev
+	}
+	else ()
 }
 
 (:~
