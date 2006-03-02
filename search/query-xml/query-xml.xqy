@@ -1,7 +1,7 @@
 (:~
  : Mark Logic Search String to XML Utility
  :
- : Copyright 2005 Ryan Grimm and O'Reilly Media
+ : Copyright 2006 Ryan Grimm and O'Reilly Media
  :
  : Licensed under the Apache License, Version 2.0 (the "License");
  : you may not use this file except in compliance with the License.
@@ -38,6 +38,12 @@ default function namespace = "http://www.w3.org/2003/05/xpath-functions"
  : thesaurus lookups you could set the operators to:
  :     ("-", "~")
  : Note: The operators can be any character but can only be one character long.
+ :
+ : @param $modes list of modes that you would like to have parsed out.  This is handy 
+ : when you want to enable searches that use words like "OR" or "AND" or "NOT".
+ : The two terms that are on either side of the mode will get a mode attribute
+ : assinged to them.  The downside is that in some cases you might not know how to 
+ : group the modes when constructing your query.
  :
  : @return A xml document that simplifies constructing a query
  :
