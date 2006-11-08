@@ -40,7 +40,7 @@ import module namespace stox  = "http://marklogic.com/commons/query-xml" at "que
 :)
 let $xml := stox:searchToXml('http://bob.com allintitle:"xquery rocks" -allintitle:java site:xquery.com -xslt -"not this phrase"',
 		("link", "site", "filetype", "allintitle", "allintext", "allinurl", "allinanchor"),
-		("+", "-")
+		("+", "-"), ("OR")
 )
 
 (: test to see if the search contains anything other then just fields
