@@ -2,10 +2,13 @@ module "http://marklogic.com/json"
 declare namespace json="http://marklogic.com/json"
 default function namespace = "http://www.w3.org/2003/05/xpath-functions"
 
-(: Need to backslash escape any double quotes and backslashes :)
+(: Need to backslash escape any double quotes, backslashes, and newlines :)
 define function json:escape($s as xs:string) as xs:string {
   let $s := replace($s, "\\", "\\")
   let $s := replace($s, """", "\""")
+  let $s := replace($s, codepoints-to-string((13, 10)), "\n")
+  let $s := replace($s, codepoints-to-string(13), "\n")
+  let $s := replace($s, codepoints-to-string(10), "\n")
   return $s
 }
 
@@ -30,6 +33,8 @@ define function json:atomize($x as element()) as xs:string {
 define function json:print-value($x as element()) as xs:string {
   if (count($x/*) = 0) then
     json:atomize($x)
+  else if ($x/@quote = "true") then
+    concat('"', json:escape(xdmp:quote($x/node())), '"')
   else
     string-join(('{',
       string-join(for $i in $x/* return json:print-name-value($i), ","),
@@ -74,6 +79,7 @@ define function json:print-name-value($x as element()) as xs:string? {
   &lt;e&gt;&lt;a array="true"&gt;text1&lt;/a&gt;&lt;/e&gt; becomes {"e":{"a":["text1"]}}
   &lt;e&gt;&lt;a type="boolean"&gt;false&lt;/a&gt;&lt;/e&gt; becomes {"e":{"a":false}}
   &lt;e&gt;&lt;a type="number"&gt;123.5&lt;/a&gt;&lt;/e&gt; becomes {"e":{"a":123.5}}
+  &lt;e quote="true"&gt;&lt;div attrib="value"/&gt;&lt;/e&gt; becomes {"e":"&lt;div attrib=\"value\"/&gt;"}
   </pre>
   <p/>
   Namespace URIs are ignored.  Namespace prefixes are included in the JSON name.
@@ -81,7 +87,10 @@ define function json:print-name-value($x as element()) as xs:string? {
   Attributes are ignored, except for the special attribute @array="true" that
   indicates the JSON serialization should write the node, even if single, as an
   array, and the attribute @type that can be set to "boolean" or "number" to
-  dictate the value should be written as that type (unquoted).
+  dictate the value should be written as that type (unquoted).  There's also
+  an @quote attribute that when set to true writes the inner content as text
+  rather than as structured JSON, useful for sending some XHTML over the
+  wire.
   <p/>
   Text nodes within mixed content are ignored.
 
