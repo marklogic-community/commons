@@ -10,9 +10,6 @@
  : reasons.  Another difference is that these functions return the
  : modified XML back to you.
  :
- : A new function, mem:node-replace() has also been added making it easier
- : for you to replace a node with a new node.
- :
  : Note: Functions that start with an underscore are private functions.
  :
  :
