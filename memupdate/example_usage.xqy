@@ -31,12 +31,12 @@ import module namespace mem = "http://xqdev.com/in-mem-lib" at "/lib/in-mem-lib.
 			<bar a="2">
 				<baz a="3"/>
 			</bar>
-			<boo>Hoo</boo>
 		</foo>
 	return (
 		mem:node-delete($foo/processing-instruction()),
 		mem:node-insert-child($foo/bar/baz, <new_node/>),
 		mem:node-insert-before($foo/bar, <new_node/>),
-		mem:node-insert-after($foo/bar, (<new_node_1/>, <new_node_2/>))
+		mem:node-insert-after($foo/bar, (<new_node_1/>, <new_node_2/>)),
+		mem:node-replace($foo/bar, <new_node_1/>)
 	)
 }</results>
