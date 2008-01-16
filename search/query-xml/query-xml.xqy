@@ -1,7 +1,7 @@
 (:~
  : Mark Logic Search String to XML Utility
  :
- : Copyright 2006 Ryan Grimm and O'Reilly Media
+ : Copyright 2008 Ryan Grimm
  :
  : Licensed under the Apache License, Version 2.0 (the "License");
  : you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  : See the License for the specific language governing permissions and
  : limitations under the License.
  :
- : @author Ryan Grimm (grimm@oreilly.com)
- : @version 0.1
+ : @author Ryan Grimm (grimm@xqdev.com)
+ : @version 0.5
  :
  :)
 
@@ -52,10 +52,11 @@ define function stox:searchToXml(
 	$search as xs:string,
 	$fields as xs:string*,
 	$operators as xs:string*,
-	$modes as xs:string*
+	$modes as xs:string*,
+	$pops as xs:string*
 ) as element(search)
 {
-	<search>{
+	stox:_collapse(
 	let $newsearch := string-join(
 		if (count(tokenize($search, '"')) > 2)
 		then
@@ -65,21 +66,23 @@ define function stox:searchToXml(
 				then replace($i, "\s+", "!+!")
 				else $i
 		else $search, '')
-	let $terms := tokenize($newsearch, "\s+|\.")
+	let $terms := tokenize($newsearch, "\s+")
 	for $term at $count in $terms
 	let $tokens := tokenize($term, ":")
-	let $rawToken := if(substring($tokens[1], 1, 1) = $operators) then substring($tokens[1], 2) else $tokens[1]
+	let $rawToken := stox:_stripOps($tokens[1], $operators, $pops)
 	where not($term = $modes)
 	return
 		if (count($tokens) > 1)
 		then
-			if ($fields[. = $rawToken] and replace(string-join($tokens[2 to count($tokens)], ""), "\s", ""))
+			if ($fields[. = $rawToken])
 			then <term>{ (
 					stox:_getMode($modes, $terms, $count)
 					,
 					stox:_getOp($tokens[1], $operators)
 					,
-					attribute { "field" } { stox:_stripOp($tokens[1], $operators) }
+					stox:_getPop($tokens[2], $pops)
+					,
+					attribute { "field" } { stox:_stripOps($tokens[1], $operators, $pops) }
 					,
 					replace(string-join($tokens[2 to count($tokens)], ":"), "!\+!", " ")
 				) }</term>
@@ -88,7 +91,9 @@ define function stox:searchToXml(
 					,
 					stox:_getOp($tokens[1], $operators)
 					,
-					stox:_stripOp(replace(string-join($tokens, ":"), "!\+!", " "), $operators) )
+					stox:_getPop($tokens[1], $pops)
+					,
+					stox:_stripOps(replace(stox:_stripOps(string-join($tokens, ":"), $operators, $pops), "!\+!", " "), $operators, $pops) )
 				}</term>
 		else if ($tokens[1])
 		then <term>{ (
@@ -96,10 +101,12 @@ define function stox:searchToXml(
 				,
 				stox:_getOp($tokens[1], $operators)
 				,
-				replace(stox:_stripOp($tokens[1], $operators), "!\+!", " ")
+				stox:_getPop($tokens[1], $pops)
+				,
+				replace(stox:_stripOps($tokens[1], $operators, $pops), "!\+!", " ")
 			) }</term>
 		else ()
-	}</search>
+	)
 }
 
 define function stox:_getMode(
@@ -134,12 +141,24 @@ define function stox:_getMode(
 define function stox:_getOp(
 	$term as xs:string,
 	$ops as xs:string*
-) as attribute()?
+) as attribute()*
 {
 	let $op := substring($term, 1, 1)
 	return
 		if ($op = $ops)
 		then attribute op { $op }
+		else ()
+}
+
+define function stox:_getPop(
+	$term as xs:string,
+	$pops as xs:string*
+) as attribute()*
+{
+	let $pop := substring($term, string-length($term), 1)
+	return
+		if ($pop = $pops)
+		then attribute postop { $pop }
 		else ()
 }
 
@@ -152,14 +171,40 @@ define function stox:_getOp(
  :
  : @return the term with the operator removed if it exists
  :)
-define function stox:_stripOp(
+define function stox:_stripOps(
 	$term as xs:string,
-	$ops as xs:string*
+	$ops as xs:string*,
+	$pops as xs:string
 ) as xs:string
 {
 	let $op := substring($term, 1, 1)
-	return
+	let $pop := substring($term, string-length($term), 1)
+	let $stripedOp :=
 		if ($op = $ops)
 		then substring($term, 2)
 		else $term
+	return
+		if ($pop = $pops)
+		then substring($stripedOp, 1, string-length($stripedOp) - 1)
+		else $stripedOp
+}
+
+define function stox:_collapse(
+	$terms as element(term)*
+) as element(search)
+{
+	<search>{
+		let $pos := 0
+		for $term in $terms
+		let $set := xdmp:set($pos, $pos + 1)
+		let $term := $terms[$pos]
+		return
+			if(exists($term/@field) and string-length($term) = 0)
+			then <term>{ (
+				$term/@*,
+				string($terms[$pos + 1]),
+				xdmp:set($pos, $pos + 1)
+			) }</term>
+			else $terms[$pos]
+	}</search>
 }
