@@ -1,0 +1,107 @@
+/*--
+
+Make sure this stylesheet is imported from another stylesheet or linked from the HTML page.
+
+--*/
+
+/*-- Search Result Widgets --*/
+div.query_description {
+	font-size: 110%;
+	margin: 0 0 1em 0;
+}
+div.query_description span {
+	padding-right: 0em;
+	}
+
+div.results_info {
+	font-size: 110%;
+	margin: 0em 0 .5em 0;
+}
+
+/*-- Search Facets --*/
+
+div.search_facet {
+	margin-bottom : .5em;
+	font-size : 110%;
+	}
+	
+div.search_facet div {
+	margin : .2em 0;
+	padding-left : 16px;
+	position : relative;
+	overflow : visible;
+	}
+
+div.search_facet div img.selected_icon {
+	position : absolute;
+	top : -2px;
+	left : 0px;
+	}
+
+/*-- Generic Styles --*/
+
+#content span.ml-highlight {
+	font-weight:bold;
+	color: #FC9605;
+}
+
+/*-- Data Panels --*/
+.analysis-panel {
+ 	margin:20px 20px 0 20px;
+ 	padding:10px;
+ 	border:1px solid #DDD;
+ 	background-color:#F7F7F7;
+ 	font-size:105%;
+ 	}
+.analysis-panel .header {
+	font-weight:bold;
+	font-size:105%;
+	margin:0 0 .3em 0;
+}
+
+/*-- Hot Tag Cloud Styles --*/ 
+
+.heatmap {
+	text-align:center;
+	line-height:170%;
+}
+.heatmap a:link,
+.heatmap a:hover {
+	text-decoration:none;
+}
+.heatmap strong.selected {
+	background:#EEE;
+	padding:1px 2px;
+	border:1px solid #C0C0C0;
+}
+.heatmap a:hover {
+	background:#DDD;
+}
+.heatmap span {
+	margin:0 2px;
+	text-decoration:underline;
+}
+.heatmap .heat1 {
+	color : rgb(10,0,0);
+	font-size:7pt;
+}
+.heatmap .heat2 {
+	color : rgb(60,0,0);
+	font-size:8pt;
+}
+.heatmap .heat3 {
+	color : rgb(125,0,0);
+	font-size:9pt;
+}
+.heatmap .heat4 {
+	color : rgb(175,0,0);
+	font-size:10pt;
+}
+.heatmap .heat5 {
+	color : rgb(220,0,0);
+	font-size:11pt;
+}
+.heatmap .heat6 {
+	color : rgb(255,0,0);
+	font-size:12pt;
+}
