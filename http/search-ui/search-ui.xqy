@@ -474,7 +474,7 @@ define function collection-facet($params as element(), $facet as element(search:
         	</a></div>
         }
     	{ (: COLLECTIONS :)
-    	for $item in $facet/search:item
+    	for $item in facet-item-sort($facet/search:item, $facet/search:facet-def/search:custom/search:sort)
 		let $value := fn:concat($collection-set-id, ":", $item/@value)
 		let $count := fn:data($item/@count)
 		let $link := fn:concat($item/text()," [",$count,"]")
@@ -560,7 +560,7 @@ define function value-facet($params as element(), $facet as element(search:facet
         	</a></div>
         }
     	{ (: VALUES :)
-    	for $item in $facet/search:item
+    	for $item in facet-item-sort($facet/search:item, $facet/search:facet-def/search:custom/search:sort)
 		let $value := fn:concat($qs-id, ":", $item/@value)
 		let $count := fn:data($item/@count)
 		let $link := fn:concat(capitalize-first-chars($item/text())," [",$count,"]")
@@ -668,7 +668,7 @@ define function value-heatmap($params as element(), $facet as element(search:fac
                 else <a href="search.xqy?{$qs}"><strong>{$link}</strong></a>
             }
         	{ (: VALUES :)
-        	for $item in facet-item-sort($facet/search:item, "name-asc")
+        	for $item in facet-item-sort($facet/search:item, $facet/search:facet-def/search:custom/search:sort)
     		let $value := fn:concat($qs-id, ":", $item/@value)
     		let $count as xs:integer := fn:data($item/@count)
     		let $link := capitalize-first-chars($item/text())
