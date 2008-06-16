@@ -1,0 +1,53 @@
+<!-- The block menu is a 2-level drop down menu that is intended for use in the sidebar. -->
+
+<div id="sidebar">
+
+	<!-- BEGIN -->
+	<h3>Topics</h3>
+	<ul class="blockMenu">
+		<li><div>
+			<a href="javascript:void(0);">All Topics</a>
+		</div></li>
+		<li>
+			<div class="current">
+				<a href="javascript:void(0);">Group A</a>
+	 			<a class="toggle" href="#" onclick="$('tdwc1').toggle();swapPlusMinus(this);return false;">
+				&ndash;
+	 			</a>
+ 			</div>
+			<ul id="tdwc1">
+				<li><a href="javascript:void(0);" >
+					Item 1
+				</a></li>	 			
+				<li><a href="javascript:void(0);" class="current">
+					Item 2
+				</a></li>	 			
+				<li><a href="javascript:void(0);" >
+					Item 3
+				</a></li>	 			
+			</ul>
+		</li>
+		<li>
+			<div>
+				<a href="javascript:void(0);">Group B</a>
+	 			<a class="toggle" href="#" onclick="$('tdwc2').toggle();swapPlusMinus(this);return false;">
+				+
+	 			</a>
+ 			</div>
+			<ul id="tdwc2">
+				<li><a href="javascript:void(0);" >
+					Item 4
+				</a></li>	 			
+				<li><a href="javascript:void(0);" >
+					Item 5
+				</a></li>	 			
+				<li><a href="javascript:void(0);" >
+					Item 6
+				</a></li>	 			
+			</ul>
+ 			<script type="text/javascript">$('tdwc2').toggle();</script>
+		</li>
+	</ul>
+	<!-- END -->
+	
+</div>

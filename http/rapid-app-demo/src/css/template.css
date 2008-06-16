@@ -1,0 +1,416 @@
+/*-- This file defines all styles for the
+header and footer of the page and also
+defines basic element styles. --*/
+
+/*-- Page Structure --*/
+
+html { /* Force Vertical Scrollbar */
+	/* IE */
+	overflow-y: scroll; 
+	/* Moz */
+	height: 100%;
+	margin-bottom: 0.1em;
+}
+
+h1,h2,h3,h4,h5,h6 {  /* beware the jabberwakky */
+	padding-left:0;
+	margin: 0;
+	}
+	
+p {
+	margin: 1.3em 0;
+}
+
+img {
+	border: 0;
+	}
+
+body {
+	font: 62.5% 'Lucida Grande', Verdana, Arial, Sans-Serif; /* Resets 1em to 10px */
+	color: #444;
+	background: #EDEDED;
+	text-align: center;
+	margin: 0 0 30px;
+	}
+
+#page {
+	background: white;
+	text-align: left;
+	margin: 0 auto;
+	padding: 0 0 0 0;
+	position: relative;
+	width: 760px; /* ignore. overridden in basicui */
+	border: 1px solid #ddd;
+	border-top: none;
+	}
+
+* html #page { width: 762px; } /* IE hack (add 2) */
+
+/*-- Quicksearch --*/
+
+.quicksearch {
+	position: relative;
+}
+
+.quicksearch input {
+	display: inline;
+	font-size: 110%;
+	padding: .1em .2em;
+}
+
+.quicksearch input.hide,
+.quicksearch input.hidden {
+	display: none;
+}
+
+.quicksearch input.radio {
+	border: 0;
+	margin-right: .4em;
+}
+
+.quicksearch label {
+	margin-right: .7em;
+}
+
+.quicksearch .textbox {
+	width: 16em;
+	border: 1px solid #DDD;
+}
+
+.quicksearch .button {
+	height: 1.8em;
+	padding:0;
+	position:relative;
+	top:1px;
+}
+
+/*-- Flat Links --*/
+
+ul.flatlinks {
+	margin: 0;
+	padding: 0;
+	}
+
+ul.flatlinks li {
+	display: inline;
+	margin: 0;
+	border-left:1px solid #AAA;
+	padding: 0 5px 0 7px;
+	}
+	
+ul.flatlinks li.first {
+	border-left:0;
+	padding-left:0;
+}
+
+ul.flatlinks li a {
+	font: 100% Verdana, Helvetica, Arial, Sans-Serif;
+	margin: 0;
+	}
+
+/*-- Tab Menu --*/
+
+ul.menu {
+	margin: 0;
+	padding: 0;
+	position: absolute;
+	bottom: 0;
+	left: 20px;
+	width: 90%;
+	}
+
+ul.menu li {
+	display: inline;
+	margin: 0;
+	}
+
+ul.menu,
+ul.menu li a {
+	padding: 5px 15px 6px;
+	}
+
+ul.menu li a {
+	font: 100% Verdana, Helvetica, Arial, Sans-Serif;
+	color: white;
+	margin: 0;
+	}
+
+ul.menu li a:hover {
+	background: #333;
+	color: #eee !important;
+	text-decoration: none;
+	}
+
+ul.menu li.current_page_item a,
+ul.menu li.current_page_item a:hover {
+	color: #333 !important;
+	background: #EEE;
+	text-decoration: none;
+	}
+
+.admintab {
+	position: absolute;
+	right: 0px;
+	}
+* html .admintab { padding: 5px 15px 6px }	/* IE hack */
+
+ul.menu li.searchtab {
+	position: absolute;
+	right: 0;
+	padding: 0;
+}
+
+ul.menu li.searchtab .quicksearch {
+	bottom: 5px;
+}
+
+/*-- Utility Area --*/
+
+#utility {
+	position:relative;
+	height : 3.1em;
+	font-size: 90%;
+	}
+
+#utility ul.flatlinks {
+	position: absolute;
+	top: 8px;
+	left: 15px;
+}
+
+#utility .quicksearch {
+	position: absolute;
+	top: 4px;
+	right: 15px;
+}
+
+/*-- Header --*/
+#header {
+	padding: 0;
+	margin: 0;
+	position: relative;
+	height: 12.0em;
+	background: #990134; /*#3371A3;*/
+	}
+* html #header { height: 120px; } /* IE hack */
+
+/* H1 is only used in the header */
+h1 {
+	font-family: 'Georgia', 'Times New Roman', 'Trebuchet MS', Verdana, Sans-Serif;
+	font-size: 300%;
+	font-weight: normal;
+	letter-spacing: -0.5px;
+	margin: 0;
+	padding: .9em 40px 0; /* use em for pad-top so header can scale */
+	}
+
+h1, h1 a, h1 a:hover, h1 a:visited {
+	text-decoration: none;
+	color: white;
+	}
+
+h1 a:hover {
+	text-decoration: underline;
+	}
+
+#header .description {
+	text-decoration: none;
+	color: white;
+	font-size: 100%;
+	margin: 0 40px;
+	}
+
+#header .dropnav {
+	position: absolute;
+	right: 15px;
+	top: 0;
+	background: #FFF;
+	border: 1px solid #DDD;
+	border-top: 0;
+	padding: 4px 10px;
+}
+
+#header .dropnav ul {
+	display:inline;
+}
+
+#header .sidearea {
+	position: absolute;
+	right: 5px;
+	bottom: 5px;
+	color: #FFFFFF;
+}
+
+#header .sidearea ul.flatlinks { display: inline; }
+#header .sidearea ul.flatlinks li { border-left: 0; border-right: 1px solid #EEE; }
+#header .sidearea .quicksearch { display: inline; }
+#header .sidearea form { display: inline; }
+#header .sidearea a { color: #FFF; }
+
+#header .quicksearch label {
+	color: #FFFFFF;
+}
+
+/*-- Sub Header --*/
+
+#subheader {
+	font-size: 90%;
+	background: #EEE;
+	padding: .7em 1.6em;
+	color: #333;
+	border-bottom: 1px solid #ddd;
+}
+#subheader * {
+	margin: 0;
+	padding: 0;
+}
+
+/*-- Content --*/
+#content {
+	position:relative;
+}
+
+/*-- Footer --*/
+
+#footer {
+	margin-top: 20px;
+	padding-bottom: 20px;
+	text-align: center;
+	clear: both;
+	}
+
+#footer a {
+	color: #888;
+	border-bottom: 1px solid #ccc;
+	font-weight: bold;
+	}
+
+#footer a:hover {
+	border: none;
+	text-decoration: none;
+	color: black;
+	}
+
+/*-- Forms --*/
+form label,
+form em {color:#666666;}
+
+form input {color:#414141;}
+
+/*form input, form textarea {
+	border: 1px solid;
+	border-color: #DCDCDC #F0F0F0 #F0F0F0 #DCDCDC;
+	font-family: Arial,Helvetica,sans-serif;
+	font-size: 120%;
+}*/
+
+form textarea {overflow:auto;}
+
+form .button {
+	border: 1px solid;
+	font-weight: bold;
+	border-color: white #DCDCDC #DCDCDC white;
+	background-color: #F0F0F0;
+	text-align: center;
+	padding: .1em .4em;
+}
+
+/*-- Content --*/
+
+div.text-content {
+	/* font : Arial, Sans-serif 120%/15em; */
+}
+
+/*-- Common Styles --*/
+
+hr {
+	display: none;
+	}
+hr.display {
+	display: block;
+}
+
+small {
+	font-size: 90%;
+	line-height: 1.5em;
+	}
+
+small, strike {
+	color: #777;
+	}
+	
+code {
+	font: 110% 'Courier New', Courier, Monospace;
+	}
+
+acronym, abbr {
+	font-size: 90%;
+	letter-spacing: .07em;
+	border-bottom: 1px dashed #999;
+	cursor: help;
+	}
+	
+a {
+	color: #27d;
+	text-decoration: none;
+	}
+	
+a:hover {
+	text-decoration: underline;
+}
+
+ol li {
+	list-style: decimal outside;
+	}
+
+h2, h3, h4 {
+	font-family: 'Trebuchet MS', Verdana, Sans-Serif;
+	}
+
+h2 { /* H2 is what kind of page you are on. */
+	text-align: center;
+	font-size: 240%;
+	font-weight: bold;
+	letter-spacing: -1px;
+	}
+
+h2, h2 a, h2 a:visited,
+h3, h3 a, h3 a:visited,
+h4, h4 a, h4 a:visited {
+	color: #444;
+	}
+
+h2, h2 a, h2 a:hover, h2 a:visited,
+h3, h3 a, h3 a:hover, h3 a:visited,
+h4, h4 a, h4 a:hover, h4 a:visited {
+	text-decoration: none;
+	}
+	
+a img,:link img,:visited img { border:none }
+
+img.noborder {
+	border: none !important;
+	}
+
+.clear {
+	clear: both;
+	margin: 0;
+	padding: 0;
+	}
+
+.center {
+	text-align: center;
+	}
+
+.alignright {
+	float: right;
+	}
+	
+.alignleft {
+	float: left
+	}
+.hide,
+.hidden {
+	display:none;
+}
+	

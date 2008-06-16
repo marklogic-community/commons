@@ -1,0 +1,7 @@
+/*-- If you'd like to override a style, such as a width or color
+in template.css or basicui.css, it is highly recommended that you
+override the style in appspecific.css. --*/
+
+@import "template.css"; /*-- Contains styles for the template shell of the page --*/
+@import "basicui.css"; /*-- Contains basic styles for the content area --*/
+@import "appspecific.css"; /*-- Contains styles specific to your application --*/

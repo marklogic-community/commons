@@ -1,0 +1,1 @@
+xdmp:redirect-response("example-default.xqy")

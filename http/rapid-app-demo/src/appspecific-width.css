@@ -1,0 +1,51 @@
+/*-- If you like these styles place them in your appspecific.css file. --*/
+
+#header {
+	padding: 0;
+	margin: 0;
+	position: relative;
+	height: 100px;
+	background: #3371A3; /*#3371A3;*/
+	}
+
+h1 {
+	margin-bottom: 0;
+	font-size: 23px;
+}
+
+#page {
+	width: 950px;
+	padding-bottom:20px;
+}
+* html #page { width: 952px; } /* IE hack (add 2) */
+
+ul.menu li.current_page_item a,
+ul.menu li.current_page_item a:hover {
+	color: black !important;
+	background: white;
+	text-decoration: none;
+	}
+
+#one_col {
+	padding-left: 100px;
+	/*padding-right: 100px; don't uncomment. will be set de facto*/
+}
+
+#one_col #primary {
+	width: 700px;
+}
+
+#two_col {
+	padding-left: 30px;
+	/*padding-right: 30px; don't uncomment. will be set de facto*/
+}
+#two_col #primary {
+	width: 700px;
+	margin-right: 0;
+	float:none;
+}
+#two_col #sidebar {
+	width: 170px;
+	margin-right: 20px;
+	float:left;
+}

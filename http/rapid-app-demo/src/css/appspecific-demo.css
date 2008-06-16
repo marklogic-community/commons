@@ -1,0 +1,110 @@
+@import "search-ui.css";
+
+/*-- Color --*/
+body {
+	background:#EEE;
+}
+
+#header {
+	background: #7094C6;
+}	
+	
+ul.menu li.current_page_item.hassub a,
+ul.menu li.current_page_item.hassub a:hover,
+#subheader {
+	background: #EEE;
+	}
+
+#page {
+	border-color:#897C76;
+	}
+
+/*-- Column Sizing --*/
+
+#header {
+	padding: 0;
+	margin: 0;
+	position: relative;
+	height: 9em; /*100px;*/
+	}
+
+h1 {
+	padding-top: .8em; /*30px;*/
+	margin-bottom: 0;
+	font-family: "Arial", "Times New Roman";
+	font-weight: bold;
+	letter-spacing: -1px;
+	font-size:275%;
+}
+
+#page {
+	width: 950px;
+	padding-bottom:20px;
+}
+* html #page { width: 952px; } /* IE hack (add 2) */
+
+ul.menu li.current_page_item a,
+ul.menu li.current_page_item a:hover {
+	color: black !important;
+	background: white;
+	text-decoration: none;
+	}
+
+#one_col {
+	padding-left: 100px;
+	/*padding-right: 100px; don't uncomment. will be set de facto*/
+}
+
+#one_col #primary {
+	width: 700px;
+}
+
+#two_col {
+	padding-left: 30px;
+	/*padding-right: 30px; don't uncomment. will be set de facto*/
+}
+#two_col #primary {
+	width: 700px;
+	margin-right: 20px;
+}
+#two_col .secondary {
+	width: 170px;
+}
+
+div.search_results div.result {
+	margin: .4em 0;
+	padding: .6em .6em .4em .6em;
+	background-color: #F9F9F9;
+	border: 1px solid #DDD;
+	font-style:normal;
+	overflow:hidden;
+}
+
+div.search_results div.result.alt {
+	background-color: #F3F3F3;
+	}
+
+div.search_results div.result .header {
+	font-size: 110%;
+	font-weight:bold;
+		}
+
+div.search_results div.result p.summary {
+	margin: 1.0em 0 .6em 0;
+	font-size:105%
+	}
+div.search_results div.result p.summary a {
+	color:darkblue;
+	}
+	
+.abstract
+{
+	border: 1px solid #DDD;
+	background: #FBFBFB;
+	font-size: 105%;
+	padding: .5em;
+}
+.loading {
+	z-index: 1;
+	text-align: center;
+}

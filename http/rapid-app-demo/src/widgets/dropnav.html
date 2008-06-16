@@ -1,0 +1,29 @@
+<!-- This is meant to be used inside the <div id="header"> of the template,
+after the logo/site title, and provides information on every page to the
+user. Can be used to display login information or useful links to the user.
+Alternatively, you can use the Utility Area built into the template. -->
+
+<div id="header">
+	<h1>Web Site Title</h1>
+	
+	<!-- BEGIN -->
+	<div class="dropnav">Logged in as: <strong>Superman</strong>
+	<ul class="flatlinks">
+		<li><a href="/logout.html">Logout</a></li>
+	</ul>
+	</div>
+	<!-- END -->
+	
+	<div class="sidearea">
+		<ul class="flatlinks">
+			<li><a href="/search_html.html?adv_search_flg=y">Advanced</a></li>
+		</ul>
+		<div class="quicksearch">
+			<form method="post" action="/search_html.html">
+				<input type="hidden" name="adv_search_flg" value="n" class="hide" />
+				<input type="text" name="search_text" id="quicksearch_q" class="textbox" value="" />
+				<input type="submit" value="Search" class="button" />
+			</form>
+		</div>
+	</div>
+</div>

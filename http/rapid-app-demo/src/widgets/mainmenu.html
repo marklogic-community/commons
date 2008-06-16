@@ -1,0 +1,62 @@
+<!-- Versi's menu allows for flexible menu layouts. Menu tabs can be positioned to
+the right and left, and a sidebar area for standard links and other
+widgets can be included as well. -->
+
+<!-- Example of a standard tab menu. -->
+<div id="header">
+	<h1>Versi Template</h1>
+	<p class="description">Site description goes here.</p>
+	
+	<!-- BEGIN -->
+	<ul class="menu">
+		<li class="current_page_item"><a href="default.html">Home</a></li>
+		<li><a href="post.html">Post</a></li>
+		<li><a href="explore.html">Explore</a></li>
+	</ul>
+	<!-- END -->
+	
+</div>
+
+<!-- Example of a menu with a tab positioned to the right. -->
+<div id="header">
+	<h1>Versi Template</h1>
+	<p class="description">Site description goes here.</p>
+	
+	<!-- BEGIN -->
+	<ul class="menu">
+		<li class="current_page_item"><a href="default.html">Home</a></li>
+		<li><a href="post.html">Post</a></li>
+		<li><a href="explore.html">Explore</a></li>
+		<li class="admintab"><a href="myaccount.html">My Stuff</a></li>
+	</ul>
+	<!-- END -->
+	
+</div>
+
+<!-- Example of a menu with a quicksearch bar and links positioned to the right. -->
+<div id="header">
+	<h1>Versi Template</h1>
+	<p class="description">The template for the man who you are.</p>
+	
+	<!-- BEGIN -->
+	<ul class="menu">
+		<li class="current_page_item"><a href="default.html">Home</a></li>
+		<li><a href="post.html">Post</a></li>
+		<li><a href="explore.html">Explore</a></li>
+	</ul>
+	<div class="sidearea">
+		<ul class="flatlinks">
+			<li><a href="/search_html.xqy?adv_search_flg=y">Advanced</a></li>
+		</ul>
+		<div class="quicksearch">
+			<form method="post" action="/search_html.xqy">
+				<input type="hidden" name="adv_search_flg" value="n" class="hide" />
+				<input type="text" name="search_text" id="quicksearch_q" class="textbox" value="" />
+				<input type="submit" value="Search" class="button" />
+			</form>
+		</div>
+	</div>
+	<!-- END -->
+	
+</div>
+	

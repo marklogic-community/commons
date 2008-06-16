@@ -1,0 +1,319 @@
+/*-- Column Sizing --*/
+
+#page {
+	width: 760px;
+	padding-bottom:20px;
+}
+* html #page { width: 762px; } /* IE hack (add 2) */
+
+#one_col {
+	padding-left: 80px;
+	/*padding-right: 80px; don't uncomment. will be set de facto*/
+}
+
+#one_col #primary {
+	width: 600px;
+}
+
+#two_col {
+	padding-left: 30px;
+	/*padding-right: 30px; don't uncomment. will be set de facto*/
+}
+#two_col #sidebar {
+	width: 180px;
+	margin-right: 20px;
+}
+#two_col #primary {
+	width: 500px;
+	margin-right: 20px;
+}
+#two_col .secondary {
+	width: 180px;
+}
+
+#three_col {
+	padding-left: 20px;
+	/*padding-right: 20px; don't uncomment. will be set de facto*/
+}
+#three_col #sidebar {
+	width: 160px;
+	margin-right: 20px;
+}
+#three_col #primary {
+	width: 380px;
+	margin-right: 20px;
+}
+#three_col .secondary {
+	width: 140px;
+}
+
+/*-- Column Styles --*/
+
+#one_col,
+#two_col,
+#three_col {
+	padding-top: 20px;
+	clear: both;
+}
+
+#content #primary {
+	float: left;
+	overflow: hidden;
+	font-size:115%;
+	}
+
+#content #one_col #primary {
+	float: none;
+	}
+
+#content .secondary {
+	overflow: hidden;
+	font: 100%/1.5em 'Lucida Grande', Verdana, Arial, Sans-Serif;
+	color: #666;
+	position: relative;
+	}
+
+#content #sidebar {
+	float: left;
+	overflow: hidden;
+	}
+
+/*-- Primary Column --*/
+
+#primary {
+	text-align: left;
+}
+
+#primary * {
+
+}
+#primary h2 {
+	font-size: 200%;
+	text-align: left;
+}
+
+/*-- Secondary Column --*/
+
+.secondary h3 {
+	font-size: 140%;
+	margin: .4em 0 .1em 0;
+}
+
+/*-- Sidebar --*/
+
+#sidebar h3 {
+	font-size: 150%;
+	margin: .3em 0 .4em 0;
+}
+
+/*-- Misc Styles --*/
+.icon
+{
+	position:relative;
+	bottom: -2px;
+}
+
+/*-- Block Menu --*/
+
+ul.blockMenu,
+ul.blockMenu ul {
+	margin:0;
+	padding:0;
+}
+
+ul.blockMenu {
+	list-style: none;
+	font-size: 120%;
+	margin-bottom: .9em;
+}
+
+ul.blockMenu li {
+	margin-bottom: 3px;
+}
+
+ul.blockMenu div {
+	position: relative;
+	border: 1px solid #CCC;
+	background: #F9F9F9;
+	padding: .3em .7em;
+}
+
+ul.blockMenu li a {
+	text-decoration: none;
+}
+
+ul.blockMenu li a:hover {
+	text-decoration: none;
+	color: orange;
+}
+
+ul.blockMenu li div.current a,
+ul.blockMenu li a.current {
+	font-weight:bold;
+}
+
+ul.blockMenu li a.toggle {
+	position: absolute;
+	top: .4em;
+	right: .8em;
+	font-weight: bold;
+}
+
+ul.blockMenu ul {
+	border-bottom:1px solid #CCC;
+	border-left:1px solid #CCC;
+	border-right:1px solid #CCC;
+	padding: .2em 0px;
+}
+
+ul.blockMenu ul li {
+	margin: 0;
+	padding: .3em .8em;
+	font-size: .9em;
+}
+
+/*-- Stack Menu --*/
+
+.secondary h3.stackMenu,
+#sidebar h3.stackMenu {
+	font-size: 150%;
+	margin: .3em 0 .1em 0;
+	}
+.secondary h3.stackMenu {
+	margin: .5em 0 .3em 0;
+	}
+
+ul.stackMenu {
+	margin-top: 0;
+	border-top: 1px solid #DDD;
+	padding:0;
+	margin-left:0;
+	}
+
+ul.stackMenu li {
+	border-bottom: 1px solid #DDD;
+	padding: .2em .3em;
+	font-size: 1.1em;
+	background: #FAFAFA;
+	}
+
+/*-- Link Group --*/
+div.linkgroup {
+	margin-bottom: .5em;
+	}
+	
+/*-- Message Styles --*/
+div.message {
+	background: #F3F3F3;
+	border: 1px solid #CCC;
+	padding: 1em 1.2em;
+	margin-bottom: .8em;
+	font-size: 115%;
+}
+
+div.message p {
+	font-weight: bold;
+	line-height: 1.7em;
+	margin:0;
+}
+
+div.message.success p {
+	background: transparent url('../images/silk/accept.png') no-repeat;
+	padding: 0 0 4px 21px;
+	color: green;
+}
+
+div.message.warning p {
+	background: transparent url('../images/silk/error.png') no-repeat;
+	padding: 0 0 4px 21px;
+	color: goldenrod;
+}
+
+div.message.error p {
+	background: transparent url('../images/silk/exclamation.png') no-repeat;
+	padding: 0 0 4px 21px;
+	color: red;
+}
+
+/*-- Formatted Form --*/
+form.formatted {padding:6px 0;}
+
+form.formatted p {
+	margin: 6px 0;
+	line-height: 2em;
+}
+
+form.formatted label {
+	display: block;
+	float: left;
+	width: 100px;
+	font-weight: bold;
+}
+form.formatted label.nofield {
+	margin-top: 0;
+}
+
+form.formatted input {
+	width: 250px;
+	padding: .2em .2em;
+}
+
+form.formatted textarea {
+	width: 465px;
+	padding: .2em .2em;
+}
+
+form.formatted .button {
+	margin: .3em 0 0 100px;
+	width: auto;
+	padding: 3px 7px;
+	color: #000;
+	font-size: 1em;
+}
+
+form.formatted em {
+	font-style: normal;
+}
+
+form.formatted .info {padding-left:90px;}
+
+/*-- Pagination Styles --*/
+.pages {
+    padding: 1em;
+    margin: 1em 0;
+    clear: left;
+}
+.pages a, .pages span {
+    display: block;
+    float: left;
+    padding: 0.2em 0.5em;
+    margin-right: 0.1em;
+    border: 1px solid #fff;
+    background: #fff;
+}
+
+.pages span.current {
+    border: 1px solid #2E6AB1;
+    font-weight: bold;
+    background: #2E6AB1;
+    color: #fff;
+}
+
+.pages a {
+    border: 1px solid #9AAFE5;
+    text-decoration: none;
+}
+
+.pages a:hover {
+    border-color: #2E6AB1;
+}
+
+.pages a.nextprev {
+    font-weight: bold;
+}
+
+.pages span.nextprev {
+    color: #666;
+	border: 1px solid #ddd;
+	color: #999;
+}
