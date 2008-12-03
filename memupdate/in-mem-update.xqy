@@ -1,3 +1,4 @@
+xquery version "1.0";
 (:~
  :
  : Copyright 2007 Ryan Grimm
@@ -25,96 +26,83 @@
  : See the License for the specific language governing permissions and
  : limitations under the License.
  :
+ : Ported to XQuery version 1.0, November 2008.
+ : 
  : @author Ryan Grimm (grimm@xqdev.com)
- : @version 0.1
+ : @version 0.2
  :
  :)
 
-module "http://xqdev.com/in-mem-update"
-declare namespace mem = "http://xqdev.com/in-mem-update"
-default function namespace = "http://www.w3.org/2003/05/xpath-functions"
+module namespace mem = "http://xqdev.com/in-mem-update";
+declare default function namespace "http://www.w3.org/2005/xpath-functions";
 
 (:
 	Inserts the given nodes as children of the given node
 :)
-define function mem:node-insert-child(
+declare function mem:node-insert-child(
 	$parentNode as element(),
 	$newNode as node()*
 ) as node()
 {
 	mem:_process(root($parentNode), $parentNode, $newNode, "insert-child")
-}
+};
 
 (:
 	Inserts the new nodes before the given node
 :)
-define function mem:node-insert-before(
+declare function mem:node-insert-before(
 	$sibling as node(),
 	$newNode as node()*
 ) as node()
 {
 	mem:_process(root($sibling), $sibling, $newNode, "insert-before")
-}
+};
 
 (:
 	Inserts the new nodes after the given node
 :)
-define function mem:node-insert-after(
+declare function mem:node-insert-after(
 	$sibling as node(),
 	$newNode as node()*
 ) as node()
 {
 	mem:_process(root($sibling), $sibling, $newNode, "insert-after")
-}
+};
 
 (:
 	Replaces the given nodes with the new node
 :)
-define function mem:node-replace(
+declare function mem:node-replace(
 	$goneNodes as node()*,
 	$newNode as node()
 ) as node()
 {
 	mem:_process(root($goneNodes[1]), $goneNodes, $newNode, "delete")
-}
+};
 
 (:
 	Deletes the given nodes
 :)
-define function mem:node-delete(
+declare function mem:node-delete(
 	$goneNodes as node()*
-) as node()
+) as node()?
 {
 	mem:_process(root($goneNodes[1]), $goneNodes, (), "delete")
-}
+};
 
 (: Private functions :)
-
-(:
-	Recursive descent
-:)
-define function mem:_descend(
-	$node as node(),
-	$goneNodes as node()*,
-	$newNode as node()*,
-	$mode as xs:string
-) as node()
-{
-	for $child in ($node/node(), $node/@*)
-	return mem:_process($child, $goneNodes, $newNode, $mode)
-}
 
 (:
 	Processes an element.  Elements that match one of the modifier nodes are
 	handeled depending on the mode.  Don't feel bad if you don't quite
 	understand this code.
 :)
-define function mem:_process(
+declare function mem:_process(
 	$node as node(),
 	$modifierNodes as node()*,
 	$newNode as node()*,
 	$mode as xs:string
-) as node()
+) as node()*
 {
 	let $matches := sum(
 		for $gone in $modifierNodes
@@ -144,12 +132,12 @@ define function mem:_process(
 			then ($newNode, $node)
 			else mem:_processNode($node, $modifierNodes, $newNode, $mode)
 		else ()
-}
+};
 
 (:
 	Constructs a node if need be and processes all of its children
 :)
-define function mem:_processNode(
+declare function mem:_processNode(
 	$node as node(),
 	$modifierNodes as node()*,
 	$newNode as node()*,
@@ -158,7 +146,10 @@ define function mem:_processNode(
 {
 	if($node instance of element(*))
 	then element { QName(namespace-uri($node), local-name($node)) } {
-		mem:_descend($node, $modifierNodes, $newNode, $mode)
+		for $child in ($node/@*, $node/node())
+        return mem:_process($child, $modifierNodes, $newNode, $mode)
+
 	}
 	else $node
-}
+};
+
