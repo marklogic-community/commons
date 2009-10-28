@@ -1,3 +1,4 @@
+xquery version "1.0";
 (:~
  :
  : Copyright 2007 Ryan Grimm
@@ -22,7 +23,7 @@
  :
  :)
 
-import module namespace mem = "http://xqdev.com/in-mem-lib" at "/lib/in-mem-lib.xqy"
+import module namespace mem = "http://xqdev.com/in-mem-update" at "/lib/in-mem-update.xqy";
 
 <results>{
 	let $foo :=
