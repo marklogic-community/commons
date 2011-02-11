@@ -22,6 +22,7 @@ xquery version "1.0-ml";
  : @version 1.1
  :
  : @see http://www.parthcomp.com
+ : @see http://www.daidalos.nl
  : @see http://wp.netscape.com/newsref/std/cookie_spec.html
  :
  :)
@@ -31,7 +32,7 @@ module namespace ck="http://parthcomp.com/cookies";
 declare variable $cookies as map:map := map:map();
 
 declare function get-cookie-names() as xs:string* {
-	distinct-values(get-cookie-names_(), map:keys($cookies))
+	fn:distinct-values((get-cookie-names_(), map:keys($cookies)))
 };
 
 declare function get-cookie($name as xs:string) as xs:string
@@ -72,11 +73,11 @@ declare function delete-cookie($name as xs:string) as empty-sequence()
 declare function add-cookie-headers() as empty-sequence()
 {
 	for $name in map:keys($cookies)
-	let $value := map:get($cookies, $name)/value/string(.)
+	let $value := map:get($cookies, $name)/value/fn:string(.)
 	let $expires := map:get($cookies, $name)/expires[. != '']/xs:dateTime(.)
-	let $domain := map:get($cookies, $name)/domain[. != '']/string(.)
-	let $path := map:get($cookies, $name)/path[. != '']/string(.)
-	let $secure := map:get($cookies, $name)/secure/string(.) eq 'true'
+	let $domain := map:get($cookies, $name)/domain[. != '']/fn:string(.)
+	let $path := map:get($cookies, $name)/path[. != '']/fn:string(.)
+	let $secure := map:get($cookies, $name)/secure/fn:string(.) = 'true'
 	return
 		if ($value eq "") then
 			delete-cookie_($name, $domain, $path)
