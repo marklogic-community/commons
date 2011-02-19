@@ -1,3 +1,4 @@
+xquery version "0.9-ml"
 (:~
  : Various Date String Parser
  :
