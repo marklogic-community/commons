@@ -1,4 +1,4 @@
-xquery version "1.0-ml";
+xquery version "0.9-ml"
 
 (:~
  : Mark Logic CIS Cookie Library
@@ -18,72 +18,15 @@ xquery version "1.0-ml";
  : limitations under the License.
  :
  : @author John Snelson (john@parthcomp.com)
- : @author Geert Josten (geert.josten@daidalos.nl, map:map contribution)
- : @version 1.1
+ : @version 1.0
  :
  : @see http://www.parthcomp.com
- : @see http://www.daidalos.nl
  : @see http://wp.netscape.com/newsref/std/cookie_spec.html
  :
  :)
 
-module namespace ck="http://parthcomp.com/cookies";
-
-declare variable $cookies as map:map := map:map();
-
-declare function get-cookie-names() as xs:string* {
-	fn:distinct-values((get-cookie-names_(), map:keys($cookies)))
-};
-
-declare function get-cookie($name as xs:string) as xs:string
-{
-	let $value := map:get($cookies, $name)/value
-	return
-		if ($value) then
-			$value
-		else
-			get-cookie_($name)
-};
-
-declare function add-cookie($name as xs:string, $value as xs:string, $expires as xs:dateTime?,
-                           $domain as xs:string?, $path as xs:string?, $secure as xs:boolean) as empty-sequence()
-{
-	map:put($cookies, $name,
-		<cookie>
-			<value>{$value}</value>
-			<expires>{$expires}</expires>
-			<domain>{$domain}</domain>
-			<path>{$path}</path>
-			<secure>{$secure}</secure>
-		</cookie>
-	)
-};
-
-declare function add-cookie($name as xs:string, $value as xs:string) as empty-sequence()
-{
-	add-cookie($name, $value, (), (), (), fn:false())
-};
-
-declare function delete-cookie($name as xs:string) as empty-sequence()
-{
-	add-cookie($name, "")
-};
-
-
-declare function add-cookie-headers() as empty-sequence()
-{
-	for $name in map:keys($cookies)
-	let $value := map:get($cookies, $name)/value/fn:string(.)
-	let $expires := map:get($cookies, $name)/expires[. != '']/xs:dateTime(.)
-	let $domain := map:get($cookies, $name)/domain[. != '']/fn:string(.)
-	let $path := map:get($cookies, $name)/path[. != '']/fn:string(.)
-	let $secure := map:get($cookies, $name)/secure/fn:string(.) = 'true'
-	return
-		if ($value eq "") then
-			delete-cookie_($name, $domain, $path)
-		else
-			add-cookie_($name, $value, $expires, $domain, $path, $secure)
-};
+module "http://parthcomp.com/cookies"
+declare namespace ck="http://parthcomp.com/cookies"
 
 (:~
  : Adds a cookie header to the response headers.
@@ -114,8 +57,8 @@ declare function add-cookie-headers() as empty-sequence()
  : @error Invalid path parameter
  :
  :)
-declare function add-cookie_($name as xs:string, $value as xs:string, $expires as xs:dateTime?,
-                           $domain as xs:string?, $path as xs:string?, $secure as xs:boolean) as empty-sequence()
+define function add-cookie($name as xs:string, $value as xs:string, $expires as xs:dateTime?,
+                           $domain as xs:string?, $path as xs:string?, $secure as xs:boolean) as empty()
 {
   if(fn:contains($domain, " ") or fn:contains($domain, ",") or fn:contains($domain, ";")) then (
     fn:error("Invalid domain parameter")
@@ -126,12 +69,12 @@ declare function add-cookie_($name as xs:string, $value as xs:string, $expires a
   ) else (),
 
   let $cookie := fn:concat(xdmp:url-encode($name), "=", xdmp:url-encode($value))
-  let $cookie := if(fn:exists($expires)) then fn:concat($cookie, "; expires=", get-cookie-date-string_($expires)) else $cookie
+  let $cookie := if(fn:exists($expires)) then fn:concat($cookie, "; expires=", get-cookie-date-string($expires)) else $cookie
   let $cookie := if(fn:exists($domain)) then fn:concat($cookie, "; domain=", $domain) else $cookie
   let $cookie := if(fn:exists($path)) then fn:concat($cookie, "; path=", $path) else $cookie
   let $cookie := if($secure) then fn:concat($cookie, "; secure") else $cookie
   return xdmp:add-response-header("Set-Cookie", $cookie)
-};
+}
 
 (:~
  : Adds a cookie header to the response headers, that will delete
@@ -155,10 +98,10 @@ declare function add-cookie_($name as xs:string, $value as xs:string, $expires a
  : @error Invalid path parameter
  :
  :)
-declare function delete-cookie_($name as xs:string, $domain as xs:string?, $path as xs:string?) as empty-sequence()
+define function delete-cookie($name as xs:string, $domain as xs:string?, $path as xs:string?) as empty()
 {
-  add-cookie_($name, "", xs:dateTime("1979-11-27T06:23:37"), (), $path, fn:false())
-};
+  add-cookie($name, "", xs:dateTime("1979-11-27T06:23:37"), (), $path, fn:false())
+}
 
 (:~
  : Retrieves a named cookie from the request headers.
@@ -169,14 +112,14 @@ declare function delete-cookie_($name as xs:string, $domain as xs:string?, $path
  : If no cookies of that name were found, the empty sequence is returned.
  :
  :)
-declare function get-cookie_($name as xs:string) as xs:string*
+define function get-cookie($name as xs:string) as xs:string*
 {
   let $urlname := xdmp:url-encode($name)
   let $header := xdmp:get-request-header("Cookie")
   let $cookies := fn:tokenize($header, "; ?")[fn:starts-with(., $urlname)]
   for $c in $cookies
   return xdmp:url-decode(fn:substring-after($c, "="))
-};
+}
 
 (:~
  : Retrieves the names of all the cookies available from the request
@@ -186,7 +129,7 @@ declare function get-cookie_($name as xs:string) as xs:string*
  : If no cookies were found, the empty sequence is returned.
  :
  :)
-declare function get-cookie-names_() as xs:string*
+define function get-cookie-names() as xs:string*
 {
   fn:distinct-values(
     let $header := xdmp:get-request-header("Cookie")
@@ -194,7 +137,7 @@ declare function get-cookie-names_() as xs:string*
     for $c in $cookies
     return xdmp:url-decode(fn:substring-before($c, "="))
   )
-};
+}
 
 (:~
  : Returns an RFC 822 compliant date string from the given dateTime,
@@ -205,16 +148,16 @@ declare function get-cookie-names_() as xs:string*
  : @return the RFC 822 complient date string.
  :
  :)
-declare function get-cookie-date-string_($date as xs:dateTime) as xs:string
+define function get-cookie-date-string($date as xs:dateTime) as xs:string
 {
-  let $gmt := xs:dayTimeDuration("PT0H")
+  let $gmt := xdt:dayTimeDuration("PT0H")
   let $date := fn:adjust-dateTime-to-timezone($date, $gmt)
-  let $day := two-digits_(fn:day-from-dateTime($date))
-  let $month := fn:month-from-dateTime($date)
-  let $year := fn:string(fn:year-from-dateTime($date))
-  let $hours := two-digits_(fn:hours-from-dateTime($date))
-  let $minutes := two-digits_(fn:minutes-from-dateTime($date))
-  let $seconds := two-digits_(xs:integer(fn:round(fn:seconds-from-dateTime($date))))
+  let $day := two-digits(fn:get-day-from-dateTime($date))
+  let $month := fn:get-month-from-dateTime($date)
+  let $year := fn:string(fn:get-year-from-dateTime($date))
+  let $hours := two-digits(fn:get-hours-from-dateTime($date))
+  let $minutes := two-digits(fn:get-minutes-from-dateTime($date))
+  let $seconds := two-digits(xs:integer(fn:round(fn:get-seconds-from-dateTime($date))))
   let $monthNames := ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
   return fn:concat(
     $day, "-",
@@ -224,7 +167,7 @@ declare function get-cookie-date-string_($date as xs:dateTime) as xs:string
     $minutes, ":",
     $seconds, " GMT"
   )
-};
+}
 
 (:~
  : Internal function to return a string representation
@@ -238,11 +181,11 @@ declare function get-cookie-date-string_($date as xs:dateTime) as xs:string
  : @return the two digit string
  :
  :)
-declare function two-digits_($num as xs:integer) as xs:string
+define function two-digits($num as xs:integer) as xs:string
 {
   let $result := fn:string($num)
   let $length := fn:string-length($result)
   return if($length > 2) then fn:substring($result, $length - 1)
     else if($length = 1) then fn:concat("0", $result)
     else if($length = 0) then "00" else $result
-};
+}
