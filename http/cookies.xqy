@@ -1,3 +1,5 @@
+xquery version "0.9-ml"
+
 (:~
  : Mark Logic CIS Cookie Library
  : 
