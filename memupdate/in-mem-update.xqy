@@ -26,9 +26,11 @@ xquery version "1.0";
  : See the License for the specific language governing permissions and
  : limitations under the License.
  :
- : Ported to XQuery version 1.0, November 2008.  Minor patch added Oct 2010.
+ : Ported to XQuery version 1.0, November 2008.  
+ : Bugfixes and performance enhancements added April 2011.
  : 
  : @author Ryan Grimm (grimm@xqdev.com)
+ : @author Michael Gursky (mgursky@marklogic.com)
  : @version 0.3
  :
  :)
