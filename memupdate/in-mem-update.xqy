@@ -118,7 +118,7 @@ declare function mem:_process(
 		then
 			if($matches > 0)
 			then element { QName(namespace-uri($node), local-name($node)) } { (
-					$node/node(), $node/@*, $newNode
+					$node/@*, $node/node(), $newNode
 				) }
 			else mem:_processNode($node, $modifierNodes, $newNode, $mode)
 		else if($mode = "insert-after")
