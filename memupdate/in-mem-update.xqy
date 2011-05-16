@@ -138,18 +138,26 @@ declare function mem:_process(
 	Constructs a node if need be and processes all of its children
 :)
 declare function mem:_processNode(
-	$node as node(),
-	$modifierNodes as node()*,
-	$newNode as node()*,
-	$mode as xs:string
+    $node as node(),
+    $modifierNodes as node()*,
+    $newNode as node()*,
+    $mode as xs:string
 ) as node()
 {
-	if($node instance of element(*))
-	then element { QName(namespace-uri($node), local-name($node)) } {
-		for $child in ($node/@*, $node/node())
-        return mem:_process($child, $modifierNodes, $newNode, $mode)
-
-	}
-	else $node
+    try {
+        if ($node instance of element(*)) then 
+            element { QName(namespace-uri($node), name($node)) } {
+                for $child in ($node/@*, $node/node())
+                return 
+                    mem:_process($child, $modifierNodes, $newNode, $mode)
+            }
+        else if (xdmp:node-kind($node) eq "document") then        
+            mem:_process($node/element(), $modifierNodes, $newNode, $mode)
+        else
+            $node
+    } catch ($error) {
+        xdmp:log($error),
+        $node
+    }
 };
 
