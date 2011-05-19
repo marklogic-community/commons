@@ -18,7 +18,7 @@ xquery version "1.0";
  : you may not use this file except in compliance with the License.
  : You may obtain a copy of the License at
  :
- :     http://www.apache.org/licenses/LICENSE-2.0
+ :	  http://www.apache.org/licenses/LICENSE-2.0
  :
  : Unless required by applicable law or agreed to in writing, software
  : distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,10 +26,10 @@ xquery version "1.0";
  : See the License for the specific language governing permissions and
  : limitations under the License.
  :
- : Ported to XQuery version 1.0, November 2008.
+ : Ported to XQuery version 1.0, November 2008.  Patches added May 2011.
  : 
  : @author Ryan Grimm (grimm@xqdev.com)
- : @version 0.2
+ : @version 0.3
  :
  :)
 
@@ -104,52 +104,44 @@ declare function mem:_process(
 	$mode as xs:string
 ) as node()*
 {
-	let $matches := sum(
-		for $gone in $modifierNodes
-		return if($node is $gone) then 1 else 0
-	)
-	return
-		if($mode = "delete")
-		then
-			if($matches > 0)
-			then $newNode
-			else mem:_processNode($node, $modifierNodes, $newNode, $mode)
-		else if($mode = "insert-child")
-		then
-			if($matches > 0)
-			then element { QName(namespace-uri($node), local-name($node)) } { (
-					$node/@*, $node/node(), $newNode
-				) }
-			else mem:_processNode($node, $modifierNodes, $newNode, $mode)
-		else if($mode = "insert-after")
-		then
-			if($matches > 0)
-			then ($node, $newNode)
-			else mem:_processNode($node, $modifierNodes, $newNode, $mode)
-		else if($mode = "insert-before")
-		then
-			if($matches > 0)
-			then ($newNode, $node)
-			else mem:_processNode($node, $modifierNodes, $newNode, $mode)
-		else ()
+	if (some $gone in $modifierNodes satisfies $node is $gone)
+	then
+		 if ($mode eq "delete")
+		 then
+			  $newNode
+		 else if ($mode eq "insert-child")
+		 then
+			  element{ QName(namespace-uri($node), local-name($node)) }
+			  {
+					typeswitch ($newNode)
+					  case attribute() return
+						 ( $node/@*, $newNode, $node/node() )
+					  default return
+						 ( $node/@*, $node/node(), $newNode )
+			  }
+		 else if ($mode eq "insert-after")
+		 then
+			  ($node, $newNode)
+		 else if ($mode eq "insert-before")
+		 then
+			  ($newNode, $node)
+		 else ()
+	else
+		 typeswitch ($node)
+			case element() return
+			  element { QName(namespace-uri($node), local-name($node)) }
+			  {
+					for $child in ($node/@*, $node/node())
+					return
+					  mem:_process($child, $modifierNodes, $newNode, $mode)
+			  }
+			case document-node() return
+			  document
+			  {
+					for $child in $node/node()
+					return
+						 mem:_process($child, $modifierNodes, $newNode, $mode)
+			  }
+			default return
+			  $node
 };
-
-(:
-	Constructs a node if need be and processes all of its children
-:)
-declare function mem:_processNode(
-	$node as node(),
-	$modifierNodes as node()*,
-	$newNode as node()*,
-	$mode as xs:string
-) as node()
-{
-	if($node instance of element(*))
-	then element { QName(namespace-uri($node), local-name($node)) } {
-		for $child in ($node/@*, $node/node())
-        return mem:_process($child, $modifierNodes, $newNode, $mode)
-
-	}
-	else $node
-};
-
