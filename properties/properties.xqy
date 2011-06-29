@@ -1,6 +1,6 @@
 (:~
  :
- : Copyright 2007 Ryan Grimm
+ : Copyright 2011 Ryan Grimm
  :
  : Many times, an application needs to store some persistant configuration
  : properties.  Currently, the only way to really do this using MarkLogic is to
@@ -11,45 +11,12 @@
  : This module is essentially a hack to get around this limitation and provide
  : similar functionality that Java gives with property sheets.  MarkLogic has the
  : ability to configure predefined namespaces in the server itself.  We can use
- : these namespaces as key value pairs.  The namespaces are defined in the server
- : Admin (Admin -> Groups -> (group name) -> Namespaces).
+ : these namespaces as key value pairs.
+ :
+ : Note: Properties are visible to the entire application group inside of
+ : MarkLogic.  That means that a property that is set in one app server will be
+ : visible to all the app servers in the same group.
  : 
- : 
- : Usage:
- : First you'll need to define a new namespace in the server.  The namespace
- : prefix should be the key in your key/value pair.  The namespace URI should be
- : in the form of: http://xqdev.com/prop/<type>/<value>.  The <type> in the URI
- : can be one of the approved XML Schema types (eg: xs:string, xs:date, xs:boolean).
- : The <value> part of the URI will end up being the value in your key/value pair.
- : 
- : The approved XML Schema types are:
- : xs:string, xs:boolean, xs:decimal, xs:float, xs:double, xs:duration,
- : xs:dateTime, xs:time, xs:date, xs:gYearMonth, xs:gYear, xs:gMonthDay, xs:gDay
- : xs:gMonth, xs:hexBinary, xs:base64Binary, xs:QName, xs:integer,
- : xs:nonPositiveInteger, xs:negativeInteger, xs:long, xs:int, xs:short, xs:byte,
- : xs:nonNegativeInteger, xs:unsignedLong, xs:unsignedInt, xs:unsignedShort,
- : xs:unsignedByte, xs:positiveInteger
- : 
- : If you have specified a type that doesn't match the above list, it will be
- : returned as an xs:string.
- : 
- : Example URI's:
- : http://xqdev.com/prop/boolean/true returns true()
- : http://xqdev.com/prop/string/foo%20bar returns "foo bar"
- : http://xqdev.com/prop/string/foo/bar returns "foo/bar"
- : http://xqdev.com/prop/date/2007-11-22 returns xs:date("2007-11-22")
- : 
- : 
- : Use Case:
- : Lets say your application needs to know if it is being executed in a production
- : or development environment.  It's going to use this information to correctly
- : write out links in your application.
- : 
- : To do this, lets configure a namespace in the server with a prefix of
- : 'deployment_mode' and a URI of 'http://xqdev.com/prop/string/production'.
- : 
- : Once that is done, calling prop:get("deployment_mode") will return "production"
- : typed as a xs:string.
  :
  :
  : Licensed under the Apache License, Version 2.0 (the "License");
@@ -65,27 +32,109 @@
  : limitations under the License.
  :
  : @author Ryan Grimm (grimm@xqdev.com)
- : @version 0.1
+ : @version 0.2
  :
  :)
 
-module "http://xqdev.com/prop"
-declare namespace prop = "http://xqdev.com/prop"
-default function namespace = "http://www.w3.org/2003/05/xpath-functions"
+xquery version "1.0-ml";
+
+module namespace prop="http://xqdev.com/prop";
+import module namespace admin = "http://marklogic.com/xdmp/admin" at "/MarkLogic/admin.xqy";
+
+declare default function namespace "http://www.w3.org/2005/xpath-functions";
+
+(:~
+ : Sets a property.
+ :
+ : Note: Properties are visible to the entire application group inside of
+ : MarkLogic.  That means that a property that is set in one app server will be
+ : visible to all the app servers in the same group.
+ :
+ : $key - The property key.  Must be unique.
+ : $value - The property value can be of any simple type:
+ : xs:string, xs:boolean, xs:decimal, xs:float, xs:double, xs:duration,
+ : xs:dateTime, xs:time, xs:date, xs:gYearMonth, xs:gYear, xs:gMonthDay, xs:gDay
+ : xs:gMonth, xs:hexBinary, xs:base64Binary, xs:QName, xs:integer,
+ : xs:nonPositiveInteger, xs:negativeInteger, xs:long, xs:int, xs:short, xs:byte,
+ : xs:nonNegativeInteger, xs:unsignedLong, xs:unsignedInt, xs:unsignedShort,
+ : xs:unsignedByte, xs:positiveInteger
+ :
+ :)
+declare function prop:set(
+    $key as xs:string,
+    $value as xs:anySimpleType
+) as empty-sequence()
+{
+    let $config := admin:get-configuration()
+    let $group := xdmp:group()
+    let $existing := admin:group-get-namespaces($config, $group)[*:prefix = $key]
+    let $test :=
+        if(exists($existing))
+        then error("PROP:REDEFINE-PROPERTY", concat("A property with the key ", $key, " already exists"))
+        else ()
+
+    let $type :=
+        if($value instance of xs:string) then "string"
+        else if($value instance of xs:boolean) then "boolean"
+        else if($value instance of xs:decimal) then "decimal"
+        else if($value instance of xs:float) then "float"
+        else if($value instance of xs:double) then "double"
+        else if($value instance of xs:duration) then "duration"
+        else if($value instance of xs:dateTime) then "dateTime"
+        else if($value instance of xs:time) then "time"
+        else if($value instance of xs:date) then "date"
+        else if($value instance of xs:gYearMonth) then "gYearMonth"
+        else if($value instance of xs:gYear) then "gYear"
+        else if($value instance of xs:gMonthDay) then "gMonthDay"
+        else if($value instance of xs:gDay) then "gDay"
+        else if($value instance of xs:gMonth) then "gMonth"
+        else if($value instance of xs:hexBinary) then "hexBinary"
+        else if($value instance of xs:base64Binary) then "base64Binary"
+        else if($value instance of xs:QName) then "QName"
+        else if($value instance of xs:integer) then "integer"
+        else if($value instance of xs:nonPositiveInteger) then "nonPositiveInteger"
+        else if($value instance of xs:negativeInteger) then "negativeInteger"
+        else if($value instance of xs:long) then "long"
+        else if($value instance of xs:int) then "int"
+        else if($value instance of xs:short) then "short"
+        else if($value instance of xs:byte) then "byte"
+        else if($value instance of xs:nonNegativeInteger) then "nonNegativeInteger"
+        else if($value instance of xs:unsignedLong) then "unsignedLong"
+        else if($value instance of xs:unsignedInt) then "unsignedInt"
+        else if($value instance of xs:unsignedShort) then "unsignedShort"
+        else if($value instance of xs:unsignedByte) then "unsignedByte"
+        else if($value instance of xs:positiveInteger) then "positiveInteger"
+        else "string"
+
+    let $namespace := admin:group-namespace($key, concat("http://xqdev.com/prop/", $type, "/", $value))
+    return admin:save-configuration(admin:group-add-namespace($config, $group, $namespace))
+};
+
+(:~
+ : Deletes a property. If there isn't a property with the supplied $key, no action is performed.
+ :)
+declare function prop:delete(
+    $key as xs:string
+) as empty-sequence()
+{
+    let $config := admin:get-configuration()
+    let $group := xdmp:group()
+    let $namespace := admin:group-get-namespaces($config, $group)[*:prefix = $key]
+    where exists($namespace)
+    return admin:save-configuration(admin:group-delete-namespace($config, $group, $namespace))
+};
 
 
-(:
-	Can return a value of any one of the approved xs:* types.
-	The type that is returned is denoted by the URI of the namespace.  For example:
-	A uri of: http://xqdev.com/prop/boolean/true will return a boolean value set to true
-	A uri of: http://xqdev.com/prop/string/true will return the string 'true'
-:)
-define function prop:get(
-	$name as xs:string
+(:~
+ : Returns the value of the property for $key. The return type is cast as the
+ : same type when the property was set.
+ :)
+declare function prop:get(
+	$key as xs:string
 ) as xs:anySimpleType?
 {
 	try {
-		let $uri := namespace-uri-for-prefix($name, element { concat($name, ":foo") } { () })
+		let $uri := namespace-uri-for-prefix($key, element { concat($key, ":foo") } { () })
 		let $bits := tokenize($uri, "/")
 		let $type := $bits[5]
 		let $value := xdmp:url-decode(string-join($bits[6 to count($bits)], "/"))
@@ -126,4 +175,4 @@ define function prop:get(
 	catch($e) {
 		()
 	}
-}
+};
