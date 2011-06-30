@@ -176,3 +176,12 @@ declare function prop:get(
 		()
 	}
 };
+
+declare function prop:all(
+) as xs:string*
+{
+    let $config := admin:get-configuration()
+    for $ns in admin:group-get-namespaces($config, xdmp:group())
+    where starts-with($ns/*:namespace-uri, "http://xqdev.com/prop/")
+    return string($ns/*:prefix)
+};
