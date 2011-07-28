@@ -19,13 +19,14 @@ xquery version "1.0-ml";
 module namespace json = "http://marklogic.com/json";
 declare default function namespace "http://www.w3.org/2005/xpath-functions";
 
-(: Need to backslash escape any double quotes, backslashes, and newlines :)
+(: Need to backslash escape any double quotes, backslashes, newlines and tabs :)
 declare function json:escape($s as xs:string) as xs:string {
   let $s := replace($s, "\\", "\\\\")
   let $s := replace($s, """", "\\""")
   let $s := replace($s, codepoints-to-string((13, 10)), "\\n")
   let $s := replace($s, codepoints-to-string(13), "\\n")
   let $s := replace($s, codepoints-to-string(10), "\\n")
+  let $s := replace($s, codepoints-to-string(9), "\\t")
   return $s
 };
 
