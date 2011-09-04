@@ -31,7 +31,7 @@ declare function hashing:sha1($message as xs:string) {
 			  	    return hashing:pad-with-zeros(
 			  			xdmp:integer-to-hex(xdmp:or64(xdmp:or64(xdmp:or64(xdmp:lshift64($codepoints[fn:last()-2], 24),xdmp:lshift64($codepoints[fn:last()-1], 16)), xdmp:lshift64($codepoints[fn:last()], 8)), xdmp:hex-to-integer('080')))
 			  		, 8))
-	let $chunks := 	for $chunk in hashing:chunk-hex(hashing:string-to-hex($message),512)
+	let $chunks := 	for $chunk in hashing:chunk-hex(hashing:string-to-hex($message),32)
 					return hashing:pad-with-zeros($chunk,8)
 	let $zeros := hashing:build-zeros(fn:count($chunks), ())
 	let $chunks := ($chunks, $i, $zeros, hashing:pad-with-zeros(xdmp:integer-to-hex(xdmp:rshift64($messageLength, 29)), 8), hashing:pad-with-zeros(xdmp:integer-to-hex(xdmp:lshift64($messageLength, 3)), 8))
