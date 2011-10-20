@@ -2,18 +2,54 @@ xquery version '1.0-ml';
 
 module namespace hashing = "/hashing";
 
-declare namespace s="http://www.w3.org/2009/xpath-functions/analyze-string";
-
 declare variable $BIT32AND := 4294967295;
 
-declare function hashing:sha1($message as xs:string) {
-	let $hMap := map:map()
-	let $h0 := map:put($hMap,'0',xdmp:hex-to-integer('67452301'))
-	let $h1 := map:put($hMap,'1',xdmp:hex-to-integer('EFCDAB89'))
-	let $h2 := map:put($hMap,'2',xdmp:hex-to-integer('98BADCFE'))
-	let $h3 := map:put($hMap,'3',xdmp:hex-to-integer('10325476'))
-	let $h4 := map:put($hMap,'4',xdmp:hex-to-integer('C3D2E1F0'))
+declare variable $binaryToHexMap := map:map();
+declare variable $hexToBinaryMap := map:map();
 
+declare variable $initializeMaps := (
+		map:put($binaryToHexMap,'0000','0'),
+		map:put($binaryToHexMap,'0001','1'),
+		map:put($binaryToHexMap,'0010','2'),
+		map:put($binaryToHexMap,'0011','3'),
+		map:put($binaryToHexMap,'0100','4'),
+		map:put($binaryToHexMap,'0101','5'),
+		map:put($binaryToHexMap,'0110','6'),
+		map:put($binaryToHexMap,'0111','7'),
+		map:put($binaryToHexMap,'1000','8'),
+		map:put($binaryToHexMap,'1001','9'),
+		map:put($binaryToHexMap,'1010','a'),
+		map:put($binaryToHexMap,'1011','b'),
+		map:put($binaryToHexMap,'1100','c'),
+		map:put($binaryToHexMap,'1101','d'),
+		map:put($binaryToHexMap,'1110','e'),
+		map:put($binaryToHexMap,'1111','f'),
+		map:put($hexToBinaryMap,'0','0000'),
+		map:put($hexToBinaryMap,'1','0001'),
+		map:put($hexToBinaryMap,'2','0010'),
+		map:put($hexToBinaryMap,'3','0011'),
+		map:put($hexToBinaryMap,'4','0100'),
+		map:put($hexToBinaryMap,'5','0101'),
+		map:put($hexToBinaryMap,'6','0110'),
+		map:put($hexToBinaryMap,'7','0111'),
+		map:put($hexToBinaryMap,'8','1000'),
+		map:put($hexToBinaryMap,'9','1001'),
+		map:put($hexToBinaryMap,'a','1010'),
+		map:put($hexToBinaryMap,'b','1011'),
+		map:put($hexToBinaryMap,'c','1100'),
+		map:put($hexToBinaryMap,'d','1101'),
+		map:put($hexToBinaryMap,'e','1110'),
+		map:put($hexToBinaryMap,'f','1111')
+									);
+
+declare function hashing:sha1($message as xs:string) {
+	let $hMap := ($initializeMaps,map:map())
+	let $h0 := map:put($hMap,'0', 1732584193) (:xdmp:hex-to-integer('67452301'):)
+	let $h1 := map:put($hMap,'1', 4023233417) (:xdmp:hex-to-integer('EFCDAB89'):)
+	let $h2 := map:put($hMap,'2', 2562383102) (:xdmp:hex-to-integer('98BADCFE'):)
+	let $h3 := map:put($hMap,'3', 271733878) (:xdmp:hex-to-integer('10325476'):)
+	let $h4 := map:put($hMap,'4', 3285377520) (:xdmp:hex-to-integer('C3D2E1F0'):)
+	
 	let $messageLength := fn:string-length($message)
 	let $messageLengthMod4 := $messageLength mod 4
 	let $i := if ($messageLengthMod4 eq 0)
@@ -66,12 +102,12 @@ declare function hashing:sha1($message as xs:string) {
 										then (xdmp:or64(xdmp:or64(xdmp:and64($b,$c),xdmp:and64($b,$d)),xdmp:and64($c,$d)))
 										else (xdmp:xor64($d,xdmp:xor64($b,$c)))
 							let $k := if ($i ge 0 and $i le 19) 
-										then (xdmp:hex-to-integer('5A827999'))
+										then (1518500249) (:xdmp:hex-to-integer('5A827999'):)
 										else if ($i ge 20 and $i le 39)
-										then (xdmp:hex-to-integer('6ED9EBA1'))
+										then (1859775393)(:xdmp:hex-to-integer('6ED9EBA1'):)
 										else if ($i ge 40 and $i le 59)
-										then (xdmp:hex-to-integer('8F1BBCDC'))
-										else (xdmp:hex-to-integer('CA62C1D6'))
+										then (2400959708)(:xdmp:hex-to-integer('8F1BBCDC'):)
+										else (3395469782)(:xdmp:hex-to-integer('CA62C1D6'):)
 							let $temp := hashing:integer-to-32bit(xdmp:add64(hashing:rotate-left32($a,5),xdmp:add64(hashing:integer-to-32bit($f), xdmp:add64($e,xdmp:add64($k, map:get($wordChunksMap, xs:string($i)))))))
 							let $_ := map:put($chunkMap ,'e',$d)
 							let $_ := map:put($chunkMap ,'d',$c)
@@ -120,9 +156,7 @@ declare function hashing:chunk-binary($binary as xs:string, $bitSize as xs:integ
 
 declare function hashing:rotate-left32($number as xs:unsignedLong, $shift as xs:integer) {
 	let $binary := hashing:pad-with-zeros(hashing:hex-to-binary(xdmp:integer-to-hex(xdmp:and64($number, $BIT32AND))), 32)
-	let $analyze := fn:analyze-string($binary, '[0-1]')
-	let $axis := $analyze/s:match[$shift]
-	let $rotatedBinary := fn:string-join(($axis/following-sibling::s:match,$axis/preceding-sibling::s:match,$axis),'')
+	let $rotatedBinary := fn:string-join((fn:substring($binary, $shift + 1),fn:substring($binary, 1, ($shift - 1)),fn:substring($binary, $shift, 1)),'')
 	return xdmp:hex-to-integer(hashing:binary-to-hex($rotatedBinary))
 };
 
@@ -150,79 +184,18 @@ declare function hashing:build-zeros($chunkCount, $zeros) {
 };
 
 declare function hashing:hex-to-binary($hex as xs:string) as xs:string {
-	let $hexLength := fn:string-length($hex)
+	let $codepoints := fn:string-to-codepoints($hex)
 	return
 	fn:string-join((
-	for $i in (1 to $hexLength)
-	let $h := fn:substring($hex, $i, 1)
-	return if ($h eq '0') 
-			then ('0000')
-			else if ($h eq '1')
-			then ('0001')
-			else if ($h eq '2')
-			then ('0010')
-			else if ($h eq '3')
-			then ('0011')
-			else if ($h eq '4')
-			then ('0100')
-			else if ($h eq '5')
-			then ('0101')
-			else if ($h eq '6')
-			then ('0110')
-			else if ($h eq '7')
-			then ('0111')
-			else if ($h eq '8')
-			then ('1000')
-			else if ($h eq '9')
-			then ('1001')
-			else if ($h eq 'a')
-			then ('1010')
-			else if ($h eq 'b')
-			then ('1011')
-			else if ($h eq 'c')
-			then ('1100')
-			else if ($h eq 'd')
-			then ('1101')
-			else if ($h eq 'e')
-			then ('1110')
-			else ('1111')
+	for $cp in $codepoints
+	return map:get($hexToBinaryMap, fn:codepoints-to-string($cp)) 
 	), '')
 };
 
 declare function hashing:binary-to-hex($binary as xs:string) as xs:string {
 	fn:string-join((	
 	for $bin in hashing:chunk-binary($binary, 4)
-	return if ($bin eq '0000') 
-			then ('0')
-			else if ($bin eq '0001')
-			then ('1')
-			else if ($bin eq '0010')
-			then ('2')
-			else if ($bin eq '0011')
-			then ('3')
-			else if ($bin eq '0100')
-			then ('4')
-			else if ($bin eq '0101')
-			then ('5')
-			else if ($bin eq '0110')
-			then ('6')
-			else if ($bin eq '0111')
-			then ('7')
-			else if ($bin eq '1000')
-			then ('8')
-			else if ($bin eq '1001')
-			then ('9')
-			else if ($bin eq '1010')
-			then ('a')
-			else if ($bin eq '1011')
-			then ('b')
-			else if ($bin eq '1100')
-			then ('c')
-			else if ($bin eq '1101')
-			then ('d')
-			else if ($bin eq '1110')
-			then ('e')
-			else ('f')
+	return map:get($binaryToHexMap, $bin)
 	), '')
 };
 
