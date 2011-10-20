@@ -20,12 +20,13 @@ module namespace json = "http://marklogic.com/json";
 declare default function namespace "http://www.w3.org/2005/xpath-functions";
 
 declare variable $new-line-regex := concat('[',codepoints-to-string((13, 10)),']+');
+declare variable $tab-regex := codepoints-to-string(9);
 
 (: Need to backslash escape any double quotes, backslashes, newlines and tabs :)
 declare function json:escape($s as xs:string) as xs:string {
   let $s := replace($s, "(\\|"")", "\\$1")
   let $s := replace($s, $new-line-regex, "\\n")
-  let $s := replace($s, codepoints-to-string(9), "\\t")
+  let $s := replace($s, $tab-regex, "\\t")
   return $s
 };
 
@@ -60,20 +61,20 @@ declare function json:print-value($x as element()) as xs:string {
 
 (: Print the name and value both :)
 declare function json:print-name-value($x as element()) as xs:string? {
-  let $name := name($x)
-  let $later-in-array := some $s in $x/following-sibling::* satisfies name($s) = $name
+  let $node-name := node-name($x)
+  let $later-in-array := exists($x/following-sibling::*[node-name(.) = $node-name])
   return
   if ($later-in-array) then
     ()  (: I am going to be handled later :)
   else 
-	let $preceding-siblings := $x/preceding-sibling::*[name(.) = $name]
+	let $preceding-siblings := $x/preceding-sibling::*[node-name(.) = $node-name]
 	let $last-in-array := ($x/@array = "true" or exists($preceding-siblings))
 	return if ($last-in-array) then
-		     string-join(('"', json:escape($name), '":[',
+         	string-join(('"', xs:string($node-name), '":[',
       		   string-join((for $i in ($preceding-siblings, $x) return json:print-value($i)), ","),
     	     ']'), "")
    		   else
-             string-join(('"', json:escape($name), '":', json:print-value($x)), "")
+             string-join(('"', xs:string($node-name), '":', json:print-value($x)), "")
 };
 
 (:~
