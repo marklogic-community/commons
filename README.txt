@@ -1,1 +1,1 @@
-commons is a repository of pure XQuery library modules
+commons is a repository of pure MarkLogic XQuery library modules
