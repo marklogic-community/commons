@@ -100,7 +100,7 @@ define function add-cookie($name as xs:string, $value as xs:string, $expires as 
  :)
 define function delete-cookie($name as xs:string, $domain as xs:string?, $path as xs:string?) as empty()
 {
-  add-cookie($name, "", xs:dateTime("1979-11-27T06:23:37"), (), $path, fn:false())
+  add-cookie($name, "", xs:dateTime("1979-11-27T06:23:37"), $domain, $path, fn:false())
 }
 
 (:~
