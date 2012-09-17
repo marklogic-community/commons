@@ -116,7 +116,7 @@ define function get-cookie($name as xs:string) as xs:string*
 {
   let $urlname := xdmp:url-encode($name)
   let $header := xdmp:get-request-header("Cookie")
-  let $cookies := fn:tokenize($header, "; ?")[fn:starts-with(., $urlname)]
+  let $cookies := fn:tokenize($header, "; ?")[fn:starts-with(., fn:concat($urlname,"="))]
   for $c in $cookies
   return xdmp:url-decode(fn:substring-after($c, "="))
 }
